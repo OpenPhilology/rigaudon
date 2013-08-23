@@ -30,7 +30,6 @@ export RELATIVE_TESS_OUTPUT=tess_eng_output
 export CSV_FILE=$SECONDARY_OUTPUT/${DATE}_${filename}_summary.csv
 export GRAPH_IMAGE_FILE=$HOCR_SELECTED/${DATE}_${filename}_summary.png
 export GRAPH_IMAGE_FILE_3D=$HOCR_SELECTED/3d.png
-export DICTIONARY_FILE=/home/fbaumgardt/MORPHEUS_DUMP_PLUS-greek-dictionary-with-bogus-freq.txt
 export SPELLCHECK_FILE=$TEXT_SELECTED/${DATE}_${filename}_spellcheck.csv
 export SIDE_BY_SIDE_VIEW=$BOOK_DIR/${barebookname}_${DATE}_${filename}_sidebyside
 export RELATIVE_SIDE_BY_SIDE_VIEW=${barebookname}_${DATE}_${filename}_sidebyside
@@ -74,6 +73,7 @@ SPELLCHECK_JOB_NAME=$JOB_NAME_BASE-spellcheck
 SPELLREPLACE_JOB_NAME=$JOB_NAME_BASE-spellreplace
 COMBINE_GREEK_AND_LATIN_JOB_NAME=$JOB_NAME_BASE-combine-hocrs
 POSTPROCESS_JOB_NAME=$JOB_NAME_BASE-postprocess
+HOCR_INFO_AGGREGATOR_JOB_NAME=$JOB_NAME_BASE-aggregator
 
 if [ ! -f $CURRENT_JOB_FILE ] 
 then
@@ -144,7 +144,10 @@ qsub -N $SPELLCHECK_JOB_NAME  -hold_jid  $BLEND_JOB_NAME -b y -o $OUTPUT_DIR -e 
 
 qsub -N $SPELLREPLACE_JOB_NAME -hold_jid  $SPELLCHECK_JOB_NAME -b y -o $OUTPUT_DIR -e $ERROR_DIR -S /bin/bash -V /usr/bin/python $RIGAUDON_HOME/Scripts/spellcheck_hocr.py $SPELLCHECK_FILE $HOCR_BLENDED   $SPELLCHECKED_HOCR_SELECTED
 
-qsub -N $COMBINE_GREEK_AND_LATIN_JOB_NAME -hold_jid $SPELLREPLACE_JOB_NAME -b y -o $OUTPUT_DIR -e $ERROR_DIR -S /bin/bash -V  $RIGAUDON_HOME/Scripts/mungomatic.sh $ABBYY_DATA $SPELLCHECKED_HOCR_SELECTED $COMBINED_HOCR
+qsub -N $COMBINE_GREEK_AND_LATIN_JOB_NAME -hold_jid $SPELLREPLACE_JOB_NAME -b y -o $OUTPUT_DIR -e $ERROR_DIR -S /bin/bash -V  $RIGAUDON_HOME/Scripts/mungomatic.sh $ABBYY_DATA $SPELLCHECKED_HOCR_SELECTED $COMBINED_HOCR $RIGAUDON_HOME $BOOK_DIR
 
-qsub -N $POSTPROCESS_JOB_NAME -p 0 -hold_jid  $COMBINE_GREEK_AND_LATIN_JOB_NAME  -o $OUTPUT_DIR -e $ERROR_DIR -S /bin/bash -V $RIGAUDON_HOME/Scripts/post_qsub_processing.sh
+qsub -N $HOCR_INFO_AGGREGATOR_JOB_NAME -hold_jid $COMBINE_GREEK_AND_LATIN_JOB_NAME -b y -o $OUTPUT_DIR -e $ERROR_DIR -S /bin/bash -V $RIGAUDON_HOME/Scripts/hocrinfoaggregator.sh $RIGAUDON_HOME $BOOK_DIR $ARCHIVE_ID $COMBINED_HOCR $AGGREGATOR_JAR $AGGREGATOR_RES $EXIST_HOME $EXIST_USR $EXIST_PWD
+
+qsub -N $POSTPROCESS_JOB_NAME -p 0 -hold_jid  $HOCR_INFO_AGGREGATOR_JOB_NAME  -o $OUTPUT_DIR -e $ERROR_DIR -S /bin/bash -V $RIGAUDON_HOME/Scripts/post_qsub_processing.sh
+
 echo $JOB_NAME_BASE > $CURRENT_JOB_FILE 
