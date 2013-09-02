@@ -53,6 +53,14 @@ cd "$BOOK_DIR/$EXIST_DATA"
 rm o*
 cd ..
 
+# due to the genius design of the toolchain, we need to shutdown the eXist REST API on port 8088 and start eXist xmlrpc on port 9090, everytime we want to upload new data.
+
+ps ax | grep -v grep | grep db/exist | awk '{print $1}' | xargs kill
+$EXIST_HOME/bin/startup.sh & sleep 10
+
 $EXIST_HOME/bin/client.sh -ouri=xmldb:exist://localhost:9090/exist/xmlrpc -u $EXIST_USR -P $EXIST_PWD -m "/db/perseus-ocr/$EXIST_DATA" -p "$BOOK_DIR/$EXIST_DATA"
+
+ps ax | grep -v grep | grep db/exist | awk '{print $1}' | xargs kill
+$EXIST_HOME/bin/server.sh & sleep 10
 
 #rm -r "$BOOK_DIR/$EXIST_DATA"
