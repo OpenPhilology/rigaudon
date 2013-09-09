@@ -5,8 +5,10 @@ Polytonic Greek OCR engine derived from Gamera, based on the work of Dalitz and 
 
 ### Usage
 
-Run on archive.org doc: rigaudon.sh --archive <archive name>
-Run on OCR results: rigaudon.sh --hocr <combined hocr folder>
-Run on aggregated hOCR: rigaudon.sh --book <folder containing .book>
+Run on archive.org doc: `rigaudon.sh --archive <archive name>`
+
+Run on OCR results: `rigaudon.sh --hocr <combined hocr folder>`
+
+Run on aggregated hOCR: `rigaudon.sh --book <folder containing .book>`
 
 *Please note that the `--hocr` process will only perform aggregation. To load the results into the DB, please use `--book`.*
