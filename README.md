@@ -3,7 +3,8 @@ Rigaudon
 
 Polytonic Greek OCR engine derived from Gamera, based on the work of Dalitz and Brandt <http://gamera.informatik.hsnr.de/addons/greekocr4gamera/index.html> and maintained by [Bruce Robertson](https://github.com/brobertson) and the [OpenPhilology Project](https://github.com/OpenPhilology).
 
-### Usage
+Licence
+-------
 
 Run on archive.org doc: `rigaudon.sh --archive <archive name>`
 
